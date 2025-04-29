@@ -1,0 +1,34 @@
+.game-of-life {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.grid {
+    position: relative;
+    border: 1px solid #000;
+}
+
+.cell {
+    position: absolute;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.cell.live {
+    background-color: #000;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
