@@ -1,0 +1,8 @@
+{
+  "gridSize": 40,
+  "cellSize": 20,
+  "updateInterval": 500,
+  "patterns": {
+    "glider": [[1, 0], [2, 1], [0, 2], [1, 2], [2, 2]]
+  }
+}
