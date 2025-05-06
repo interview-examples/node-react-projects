@@ -24,7 +24,7 @@ function SearchForm({ onSearch }) {
         () => searchParams.adults + searchParams.kids + searchParams.infants,
         [searchParams.adults, searchParams.kids, searchParams.infants]
     );
-    const isFormValid = useSearchFormValidation(searchParams);
+    const { isValid, validationErrors } = useSearchFormValidation(searchParams);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -42,10 +42,23 @@ function SearchForm({ onSearch }) {
         setPassengerPopupOpen(false);
     };
 
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSearch(searchParams);
+        if (isValid) {
+            onSearch(searchParams);
+        }
+    };
+
+    // Helper function to render error message
+    const renderErrorMessage = (fieldName) => {
+        return validationErrors[fieldName] ? (
+            <div className="text-red-500 text-xs mt-1">{validationErrors[fieldName]}</div>
+        ) : null;
+    };
+
+    // Helper function to get input class based on validation
+    const getInputClass = (fieldName) => {
+        return `w-full border p-2 rounded ${validationErrors[fieldName] ? 'border-red-500' : 'border-gray-300'}`;
     };
 
     return (
@@ -68,11 +81,12 @@ function SearchForm({ onSearch }) {
                     </div>
                     <div className="w-full md:w-1/2 px-2 mb-4 relative">
                         <div
-                            className="border p-2 rounded cursor-pointer"
+                            className={`border p-2 rounded cursor-pointer ${validationErrors.passengers ? 'border-red-500' : ''}`}
                             onClick={() => setPassengerPopupOpen(!isPassengerPopupOpen)}
                         >
                             {totalPassengers} Passenger{totalPassengers > 1 ? 's' : ''}
                         </div>
+                        {renderErrorMessage('passengers')}
                         {isPassengerPopupOpen && (
                             <PassengerPopup
                                 initialPassengers={{
@@ -110,11 +124,12 @@ function SearchForm({ onSearch }) {
                         <input
                             type="text"
                             placeholder="Departure from ..."
-                            className="w-full"
+                            className={getInputClass('originSkyName')}
                             name="originSkyName"
                             value={searchParams.originSkyName}
                             onChange={handleChange}
                         />
+                        {renderErrorMessage('originSkyName')}
                     </div>
                     <div className="w-full md:w-1/2 px-2 mb-4">
                         <Typography variant="small" color="blue-gray" className="mb-2 font-medium">
@@ -123,11 +138,12 @@ function SearchForm({ onSearch }) {
                         <input
                             type="text"
                             placeholder="Arrival to ..."
-                            className="w-full"
+                            className={getInputClass('destinationSkyName')}
                             name="destinationSkyName"
                             value={searchParams.destinationSkyName}
                             onChange={handleChange}
                         />
+                        {renderErrorMessage('destinationSkyName')}
                     </div>
                 </div>
                 <div className="flex flex-wrap -mx-2">
@@ -137,11 +153,13 @@ function SearchForm({ onSearch }) {
                         </Typography>
                         <Input
                             type="date"
-                            className="w-full"
+                            className={getInputClass('date')}
                             name="date"
                             value={searchParams.date}
                             onChange={handleChange}
+                            min={new Date().toISOString().split('T')[0]} // Prevent selecting past dates
                         />
+                        {renderErrorMessage('date')}
                     </div>
                     {searchParams.tripType === 'round-trip' && (
                         <div className="w-full md:w-1/2 px-2 mb-4">
@@ -150,11 +168,13 @@ function SearchForm({ onSearch }) {
                             </Typography>
                             <Input
                                 type="date"
-                                className="w-full"
+                                className={getInputClass('returnDate')}
                                 name="returnDate"
                                 value={searchParams.returnDate}
                                 onChange={handleChange}
+                                min={searchParams.date || new Date().toISOString().split('T')[0]} // Ensure return date is after flight date
                             />
+                            {renderErrorMessage('returnDate')}
                         </div>
                     )}
                 </div>
@@ -162,9 +182,9 @@ function SearchForm({ onSearch }) {
                     <button
                         type="submit"
                         className={`align-middle select-none font-sans font-bold text-center uppercase transition-all text-xs py-3 rounded shadow-md mt-4 w-auto px-8 ${
-                            isFormValid ? 'bg-blue-500 text-white hover:shadow-lg focus:opacity-[0.85] active:opacity-[0.85]'
+                            isValid ? 'bg-blue-500 text-white hover:shadow-lg focus:opacity-[0.85] active:opacity-[0.85]'
                                 : 'bg-blue-200 opacity-50 shadow-none pointer-events-none'}`}
-                        disabled={!isFormValid}
+                        disabled={!isValid}
                     >
                         Search flights
                     </button>

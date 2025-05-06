@@ -1,0 +1,10 @@
+{
+  "API": {
+    "KEY": "8bbe4fee2bmshf3a481240fa5b17p1774b6jsn5fd15f329bd4",
+    "HOST": "sky-scrapper.p.rapidapi.com"
+  },
+  "URIs": {
+    "searchFlights": "/api/v2/flights/searchFlights",
+    "searchAirport": "/api/v1/flights/searchAirport"
+  }
+}
